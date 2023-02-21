@@ -15,7 +15,6 @@ v1.0 - First release
 /**************************************************************************/
 #include <Arduino.h>
 #include "MQ135.h"
-float rzero = 0;
 /**************************************************************************/
 /*!
 @brief  Default constructor
@@ -85,7 +84,7 @@ float MQ135::getCorrectedResistance(float t, float h) {
 @return The ppm of CO2 in the air
 */
 /**************************************************************************/
-float MQ135::getCorrectedPPM(float t, float h) {
+float MQ135::getCorrectedPPM(float t, float h, float rzero) {
   return PARA * pow((getCorrectedResistance(t, h)/rzero), -PARB);
 }
 

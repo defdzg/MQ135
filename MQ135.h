@@ -31,8 +31,6 @@ v1.0 - First release
 #define CORG 1.130128205
 /// Atmospheric CO2 level for calibration purposes
 #define ATMOCO2 420.58 // 2023
-/* ---------------------------- Global variables ---------------------------- */
-extern float rzero;
 /* ---------------------------------- Class --------------------------------- */
 class MQ135 {
  private:
@@ -43,7 +41,7 @@ class MQ135 {
   float getCorrectionFactor(float t, float h);
   float getResistance();
   float getCorrectedResistance(float t, float h);
-  float getCorrectedPPM(float t, float h);
+  float getCorrectedPPM(float t, float h, float rzero);
   float getCorrectedRZero(float t, float h);
 };
 #endif // End MQ135_H
