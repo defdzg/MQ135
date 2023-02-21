@@ -13,9 +13,9 @@ the datasheet but the information there seems to be wrong.
 v1.0 - First release
 */
 /**************************************************************************/
-
+#include <Arduino.h>
 #include "MQ135.h"
-
+float rzero = 0;
 /**************************************************************************/
 /*!
 @brief  Default constructor
@@ -52,7 +52,7 @@ float MQ135::getCorrectionFactor(float t, float h) {
 /**************************************************************************/
 float MQ135::getResistance() {
   int val = analogRead(_pin);
-  return ((1023./(float)val) * 5. - 1.)*RLOAD;
+  return ((1023./(float)val) - 1.)*RLOAD;
 }
 
 /**************************************************************************/
@@ -67,18 +67,11 @@ float MQ135::getResistance() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedResistance(float t, float h) {
-  return getResistance()/getCorrectionFactor(t, h);
-}
-
-/**************************************************************************/
-/*!
-@brief  Get the ppm of CO2 sensed (assuming only CO2 in the air)
-
-@return The ppm of CO2 in the air
-*/
-/**************************************************************************/
-float MQ135::getPPM() {
-  return PARA * pow((getResistance()/RZERO), -PARB);
+  if(t < 20){
+        return CORA * t * t - CORB * t + CORC - (h-33.)*CORD;
+    } else {
+        return CORE * t + CORF * h + CORG;
+    }
 }
 
 /**************************************************************************/
@@ -93,18 +86,7 @@ float MQ135::getPPM() {
 */
 /**************************************************************************/
 float MQ135::getCorrectedPPM(float t, float h) {
-  return PARA * pow((getCorrectedResistance(t, h)/RZERO), -PARB);
-}
-
-/**************************************************************************/
-/*!
-@brief  Get the resistance RZero of the sensor for calibration purposes
-
-@return The sensor resistance RZero in kOhm
-*/
-/**************************************************************************/
-float MQ135::getRZero() {
-  return getResistance() * pow((ATMOCO2/PARA), (1./PARB));
+  return PARA * pow((getCorrectedResistance(t, h)/rzero), -PARB);
 }
 
 /**************************************************************************/
